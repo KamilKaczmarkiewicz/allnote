@@ -1,6 +1,7 @@
 package com.allnote.note;
 
 import com.allnote.note.exception.NoteNotFoundException;
+import com.allnote.user.User;
 import com.allnote.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,11 @@ public class NoteService {
     public Page<Note> findAll(int page, int size, List<String> sort) {
         Pageable pr = PageRequest.of(page, size, Sort.by(Utils.createSortOrder(sort)));
         return noteRepository.findAll(pr);
+    }
+
+    public Page<Note> findAllByUser(User user, int page, int size, List<String> sort) {
+        Pageable pr = PageRequest.of(page, size, Sort.by(Utils.createSortOrder(sort)));
+        return noteRepository.findAllByUser(user, pr);
     }
 
     public void create(Note note) {

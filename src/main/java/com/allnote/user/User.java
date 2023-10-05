@@ -1,8 +1,6 @@
-package com.allnote.note;
+package com.allnote.user;
 
-import com.allnote.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,28 +10,39 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notes")
+@Table(name = "users")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Note {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String title;
+    @Column(name = "first_name")
+    private String firstName;
 
-    private String summary;
+    @Column(name = "last_name")
+    private String lastName;
 
-    @Column(name = "content", columnDefinition = "CLOB")
-    @Lob
-    private String content;
+    private String email;
+
+    private String username;
+
+    private String password;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "profile_picture_path")
+    private String profilePicturePath;
 
     @CreatedDate
     @Column(name = "created_date")
@@ -45,10 +54,4 @@ public class Note {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm")
     private LocalDateTime lastModifiedDate;
 
-    @JoinColumn(name = "user_id", nullable = false)
-    @ManyToOne()
-    @JsonIgnore
-    private User user;
-
-//    todo make relation with Tag
 }
