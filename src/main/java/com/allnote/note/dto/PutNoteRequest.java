@@ -8,9 +8,12 @@ public record PutNoteRequest(
         String content
 ) {
     public Note putNoteRequestToNote(Note note) {
-        note.setTitle(title);
-        note.setSummary(summary);
-        note.setContent(content);
+        if (title != null)
+            note.setTitle(title);
+        if (summary != null)
+            note.setSummary(summary);
+        if (content != null)
+            note.setContent(content);
         return note;
     }
 }
