@@ -13,4 +13,9 @@ public class ApiUserExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(404));
     }
 
+    @ExceptionHandler(value = {InvalidFileExtensionException.class})
+    public ResponseEntity<Object> handleInvalidFileExtensionException(RuntimeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
+    }
+
 }

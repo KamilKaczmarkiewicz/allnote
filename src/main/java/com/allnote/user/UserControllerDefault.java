@@ -7,10 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,34 +23,46 @@ public class UserControllerDefault implements UserController {
     private PagedResourcesAssembler pagedResourcesAssembler;
 
     @Override
-    public UserModel getUser(@PathVariable("id") long id) {
+    public UserModel getUser(long id) {
         User user = userService.find(id).orElseThrow(() -> new UserNotFoundException(id));
         return userModelAssembler.toModel(user);
     }
 
     @Override
-    public PagedModel getUsers
-            (@RequestParam(defaultValue = "0") int page,
-             @RequestParam(defaultValue = "3") int size,
-             @RequestParam(defaultValue = "username,asc") List<String> sort) {
+    public PagedModel getUsers(int page, int size, List<String> sort) {
         Page<User> users = userService.findAll(page, size, sort);
         return pagedResourcesAssembler.toModel(users, userModelAssembler);
     }
 
     @Override
-    public void postUser(@RequestBody PostUserRequest request) {
+    public void postUser(PostUserRequest request) {
         userService.create(request.postUserRequestToUser());
     }
 
     @Override
-    public void putUser(@PathVariable("id") long id, @RequestBody PutUserRequest request) {
+    public void putUser(long id, PutUserRequest request) {
         User user = userService.find(id).orElseThrow(() -> new UserNotFoundException(id));
         userService.update(request.putUserRequestToUser(user));
     }
 
     @Override
-    public void deleteUser(@PathVariable("id") long id) {
+    public void deleteUser(long id) {
         userService.delete(id);
+    }
+
+    @Override
+    public byte[] getUserProfilePicture(long id) {
+        return userService.findProfilePicture(id);
+    }
+
+    @Override
+    public void putUserProfilePicture(long id, MultipartFile image) {
+        userService.updateProfilePicture(id, image);
+    }
+
+    @Override
+    public void deleteUserProfilePicture(long id) {
+        userService.deleteProfilePicture(id);
     }
 
 }
