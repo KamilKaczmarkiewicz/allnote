@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 @Table(name = "users")
@@ -20,7 +23,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +57,25 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm")
     private LocalDateTime lastModifiedDate;
 
+
+    @Column(name = "is_account_non_expired")
+    @Builder.Default
+    private boolean isAccountNonExpired = true;
+
+    @Column(name = "is_account_non_locked")
+    @Builder.Default
+    private boolean isAccountNonLocked = true;
+
+    @Column(name = "is_credentials_non_expired")
+    @Builder.Default
+    private boolean isCredentialsNonExpired = true;
+
+    @Column(name = "is_enabled")
+    @Builder.Default
+    private boolean isEnabled = true;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
 }

@@ -18,4 +18,9 @@ public class ApiUserExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
     }
 
+    @ExceptionHandler(value = {UserWithUsernameAlreadyExistsException.class})
+    public ResponseEntity<Object> handleUserWithUsernameAlreadyExistsException(RuntimeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
+    }
+
 }
