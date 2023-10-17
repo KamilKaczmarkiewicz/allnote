@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @Log4j2
@@ -32,17 +33,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         log.info(request.getServletPath());
         if (request.getServletPath().startsWith("/api/auth")) {
-            log.info("path for auth");
+            log.info("path for auth: " + request.getServletPath());
             filterChain.doFilter(request, response);
             return;
         }
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        Optional<String> optionalJwt = tokenService.getTokenFromHttpServletRequest(request);
+        if (optionalJwt.isEmpty()) {
             log.info("authHeader == null or authHeader doesn't start with Bearer");
             filterChain.doFilter(request, response);
             return;
         }
-        final String jwt = authHeader.substring(7);
+        final String jwt = optionalJwt.get();
         final String username = tokenService.extractUsername(jwt);
         if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             log.info("username == null or user authenticated");

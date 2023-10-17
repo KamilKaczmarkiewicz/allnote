@@ -1,6 +1,8 @@
 package com.allnote.auth;
 
+import com.allnote.auth.dto.AuthenticationResponse;
 import com.allnote.auth.dto.LoginRequest;
+import com.allnote.auth.exception.InvalidRefreshTokenException;
 import com.allnote.user.User;
 import com.allnote.user.UserService;
 import com.allnote.user.dto.PostUserRequest;
@@ -10,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +23,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -31,21 +35,32 @@ public class TokenService {
     private final UserService userService;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
+    @Value("${application.security.jwt.expiration-token}")
+    private long jwtExpirationToken;
+    @Value("${application.security.jwt.expiration-refresh-token}")
+    private long jwtExpirationRefreshToken;
 
-    public String authenticate(LoginRequest request) {
+    public AuthenticationResponse authenticate(LoginRequest request) {
         UserDetails user = userService.loadUserByUsername(request.username());
-        return Jwts.builder()
-                .setClaims(new HashMap<>())
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+        return new AuthenticationResponse(generateToken(user), generateRefreshToken(user));
     }
 
-    public String register(PostUserRequest request) {
+    public AuthenticationResponse refresh(HttpServletRequest request) {
+        final String jwt = getTokenFromHttpServletRequest(request)
+                .orElseThrow(() -> new InvalidRefreshTokenException());
+        Boolean isRefreshToken = (Boolean) extractClaim(jwt,"refreshToken");
+        if(isRefreshToken == null || !isRefreshToken){
+            throw new InvalidRefreshTokenException();
+        }
+        String username = extractUsername(jwt);
+        UserDetails user = userService.loadUserByUsername(username);
+        if (!isTokenValid(jwt, user)) {
+            throw new InvalidRefreshTokenException();
+        }
+        return new AuthenticationResponse(generateToken(user), generateRefreshToken(user));
+    }
+
+    public AuthenticationResponse register(PostUserRequest request) {
         try {
             userService.loadUserByUsername(request.username());
             throw new UserWithUsernameAlreadyExistsException(request.username());
@@ -54,7 +69,7 @@ public class TokenService {
         }
         User user = request.postUserRequestToUser();
         userService.create(user);
-        return generateToken(user);
+        return new AuthenticationResponse(generateToken(user), generateRefreshToken(user));
     }
 
     public String extractUsername(String token) {
@@ -64,6 +79,11 @@ public class TokenService {
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
+    }
+
+    public Object extractClaim(String token, Object key) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get(key);
     }
 
     private Claims extractAllClaims(String token) {
@@ -80,7 +100,13 @@ public class TokenService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, jwtExpirationToken);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("refreshToken", true);
+        return buildToken(extraClaims, userDetails, jwtExpirationRefreshToken);
     }
 
     private String buildToken(
@@ -116,4 +142,11 @@ public class TokenService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public Optional<String> getTokenFromHttpServletRequest(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return Optional.empty();
+        }
+        return Optional.of(authHeader.substring(7));
+    }
 }
