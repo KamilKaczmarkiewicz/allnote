@@ -11,17 +11,24 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import java.util.Arrays;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final String[] WHITE_LIST_URL = {
+            "/api/notes/**",
+            "/api/auth/**",
+            "/h2-console/**"
+    };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //todo 3. authorization and roles
         //todo 4. sending mails and reset/forget password
         //todo 5. add tags to notes
         //todo 6. add rabbitmq and make send mailing with using it (in the same application)
@@ -34,9 +41,14 @@ public class SecurityConfig {
                     cors.disable();
                 })
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/notes/**")).permitAll();
-                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll();
+                    Arrays.stream(WHITE_LIST_URL).forEach(url ->
+                            auth.requestMatchers(AntPathRequestMatcher.antMatcher(url)).permitAll());
+//                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/users/**")).hasAnyRole(Role.ADMIN.name())
+//                    auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET,"/api/users/**")).hasAnyAuthority(Permission.ADMIN_READ.getPermission())
                     auth.anyRequest().authenticated();
+                })
+                .headers(headers -> {//todo delete after changing db for another than h2
+                    headers.frameOptions().disable();
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

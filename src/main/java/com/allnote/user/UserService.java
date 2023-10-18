@@ -29,8 +29,8 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public Optional<User> find(long id) {
-        return userRepository.findById(id);
+    public Optional<User> find(long userId) {
+        return userRepository.findById(userId);
     }
 
     public Page<User> findAll(int page, int size, List<String> sort) {
@@ -46,8 +46,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    void delete(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    void delete(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userRepository.delete(user);
     }
 
@@ -92,8 +92,8 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    void deleteProfilePicture(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    void deleteProfilePicture(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         if (user.getProfilePicturePath() != null) {
             Path path = Paths.get(user.getProfilePicturePath());
             if (Files.exists(path)) {

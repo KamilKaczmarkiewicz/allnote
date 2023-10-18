@@ -2,7 +2,7 @@ package com.allnote.note.exception;
 
 public class NoteNotFoundException extends RuntimeException {
 
-    public NoteNotFoundException(long id) {
-        super("note with id: " + id + " not found!");
+    public NoteNotFoundException(long noteId) {
+        super("note with id: " + noteId + " not found!");
     }
 }

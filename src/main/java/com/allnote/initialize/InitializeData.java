@@ -2,6 +2,7 @@ package com.allnote.initialize;
 
 import com.allnote.note.Note;
 import com.allnote.note.NoteService;
+import com.allnote.user.Role;
 import com.allnote.user.User;
 import com.allnote.user.UserService;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,8 @@ public class InitializeData implements InitializingBean {
                 .password("password")
                 .birthDate(LocalDate.of(1990, 1, 20))
                 .build();
+        a1.getRoles().add(Role.USER);
+        a1.getRoles().add(Role.ADMIN);
         User a2 = User.builder()
                 .firstName("Adam")
                 .lastName("Lis")
@@ -40,6 +43,7 @@ public class InitializeData implements InitializingBean {
                 .password("password")
                 .birthDate(LocalDate.of(1992, 4, 11))
                 .build();
+        a2.getRoles().add(Role.USER);
         User a3 = User.builder()
                 .firstName("Ewa")
                 .lastName("Las")
@@ -48,6 +52,7 @@ public class InitializeData implements InitializingBean {
                 .password("password")
                 .birthDate(LocalDate.of(2001, 10, 2))
                 .build();
+        a3.getRoles().add(Role.USER);
         User a4 = User.builder()
                 .firstName("Krzysiek")
                 .lastName("Las")
@@ -56,6 +61,7 @@ public class InitializeData implements InitializingBean {
                 .password("password")
                 .birthDate(LocalDate.of(2001, 10, 2))
                 .build();
+        a4.getRoles().add(Role.USER);
         if (userService.findAll(0, 3, orderUsers).isEmpty()) {
 
             userService.create(a1);

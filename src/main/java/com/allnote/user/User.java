@@ -1,11 +1,9 @@
 package com.allnote.user;
 
+import com.allnote.note.Note;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +13,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -47,6 +49,11 @@ public class User implements UserDetails {
     @Column(name = "profile_picture_path")
     private String profilePicturePath;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)//todo check deleting
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Note> notes;
+
     @CreatedDate
     @Column(name = "created_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm")
@@ -57,6 +64,9 @@ public class User implements UserDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm")
     private LocalDateTime lastModifiedDate;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private List<Role> roles = new LinkedList<>();
 
     @Column(name = "is_account_non_expired")
     @Builder.Default
@@ -76,6 +86,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream().flatMap(role -> role.getAuthorities().stream()).collect(Collectors.toList());
     }
 }

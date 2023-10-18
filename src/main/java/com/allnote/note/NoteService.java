@@ -19,8 +19,8 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
 
-    Optional<Note> find(long id) {
-        return noteRepository.findById(id);
+    Optional<Note> find(long noteId) {
+        return noteRepository.findById(noteId);
     }
 
     public Page<Note> findAll(int page, int size, List<String> sort) {
@@ -41,8 +41,12 @@ public class NoteService {
         noteRepository.save(note);
     }
 
-    void delete(long id) {
-        Note note = noteRepository.findById(id).orElseThrow(() -> new NoteNotFoundException(id));
+    void delete(long noteId) {
+        Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        noteRepository.delete(note);
+    }
+
+    void delete(Note note) {
         noteRepository.delete(note);
     }
 

@@ -2,6 +2,7 @@ package com.allnote.user;
 
 import com.allnote.user.dto.PostUserRequest;
 import com.allnote.user.dto.PutUserRequest;
+import com.allnote.user.exception.ForbiddenException;
 import com.allnote.user.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,8 +24,8 @@ public class UserControllerDefault implements UserController {
     private PagedResourcesAssembler pagedResourcesAssembler;
 
     @Override
-    public UserModel getUser(long id) {
-        User user = userService.find(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserModel getUser(long userId) {
+        User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
         return userModelAssembler.toModel(user);
     }
 
@@ -36,33 +37,48 @@ public class UserControllerDefault implements UserController {
 
     @Override
     public void postUser(PostUserRequest request) {
+        if (!UserUtils.isUserAdmin()) {
+            throw new ForbiddenException();
+        }
         userService.create(request.postUserRequestToUser());
     }
 
     @Override
-    public void putUser(long id, PutUserRequest request) {
-        User user = userService.find(id).orElseThrow(() -> new UserNotFoundException(id));
+    public void putUser(long userId, PutUserRequest request) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
+        User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userService.update(request.putUserRequestToUser(user));
     }
 
     @Override
-    public void deleteUser(long id) {
-        userService.delete(id);
+    public void deleteUser(long userId) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
+        userService.delete(userId);
     }
 
     @Override
-    public byte[] getUserProfilePicture(long id) {
-        return userService.findProfilePicture(id);
+    public byte[] getUserProfilePicture(long userId) {
+        return userService.findProfilePicture(userId);
     }
 
     @Override
-    public void putUserProfilePicture(long id, MultipartFile image) {
-        userService.updateProfilePicture(id, image);
+    public void putUserProfilePicture(long userId, MultipartFile image) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
+        userService.updateProfilePicture(userId, image);
     }
 
     @Override
-    public void deleteUserProfilePicture(long id) {
-        userService.deleteProfilePicture(id);
+    public void deleteUserProfilePicture(long userId) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
+        userService.deleteProfilePicture(userId);
     }
 
 }

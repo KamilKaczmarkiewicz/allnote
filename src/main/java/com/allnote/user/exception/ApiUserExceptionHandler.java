@@ -23,4 +23,9 @@ public class ApiUserExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
     }
 
+    @ExceptionHandler(value = {ForbiddenException.class})
+    public ResponseEntity<Object> handleForbiddenException(RuntimeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(403));
+    }
+
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface UserController {
     @GetMapping("/api/users/{id}")
-    UserModel getUser(@PathVariable("id") long id);
+    UserModel getUser(@PathVariable("id") long userId);
 
     @GetMapping("/api/users")
     PagedModel getUsers
@@ -26,22 +26,22 @@ public interface UserController {
 
     @PutMapping("/api/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void putUser(@PathVariable("id") long id, @RequestBody PutUserRequest request);
+    void putUser(@PathVariable("id") long userId, @RequestBody PutUserRequest request);
 
     @DeleteMapping("/api/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteUser(@PathVariable("id") long id);
+    void deleteUser(@PathVariable("id") long userId);
 
     @GetMapping(path = "/api/users/{id}/profile-picture", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    byte[] getUserProfilePicture(@PathVariable("id") long id);
+    byte[] getUserProfilePicture(@PathVariable("id") long userId);
 
     @PutMapping("/api/users/{id}/profile-picture")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void putUserProfilePicture(@PathVariable("id") long id, @RequestParam("image") MultipartFile image);
+    void putUserProfilePicture(@PathVariable("id") long userId, @RequestParam("image") MultipartFile image);
 
 
     @DeleteMapping("/api/users/{id}/profile-picture")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteUserProfilePicture(@PathVariable("id") long id);
+    void deleteUserProfilePicture(@PathVariable("id") long userId);
 }

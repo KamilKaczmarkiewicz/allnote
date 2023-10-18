@@ -5,6 +5,8 @@ import com.allnote.note.dto.PutNoteRequest;
 import com.allnote.note.exception.NoteNotFoundException;
 import com.allnote.user.User;
 import com.allnote.user.UserService;
+import com.allnote.user.UserUtils;
+import com.allnote.user.exception.ForbiddenException;
 import com.allnote.user.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -27,8 +30,8 @@ public class NoteControllerDefault implements NoteController {
     private final PagedResourcesAssembler pagedResourcesAssembler;
 
     @Override
-    public NoteModel getNote(long id) {
-        Note note = noteService.find(id).orElseThrow(() -> new NoteNotFoundException(id));
+    public NoteModel getNote(long noteId) {
+        Note note = noteService.find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
         return noteModelAssembler.toModel(note);
     }
 
@@ -47,19 +50,29 @@ public class NoteControllerDefault implements NoteController {
 
     @Override
     public void postNote(long userId, PostNoteRequest request) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
         User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
         noteService.create(request.postNoteRequestToNote(user));
     }
 
     @Override
-    public void putNote(long id, PutNoteRequest request) {
-        Note note = noteService.find(id).orElseThrow(() -> new NoteNotFoundException(id));
+    public void putNote(long noteId, PutNoteRequest request) {
+        Note note = noteService.find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        if (!UserUtils.isUserAdminOrUserCaller(note.getUser().getId())) {
+            throw new ForbiddenException();
+        }
         noteService.update(request.putNoteRequestToNote(note));
     }
 
     @Override
-    public void deleteNote(long id) {
-        noteService.delete(id);
+    public void deleteNote(long noteId) {
+        Note note = noteService.find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        if (!UserUtils.isUserAdminOrUserCaller(note.getUser().getId())) {
+            throw new ForbiddenException();
+        }
+        noteService.delete(note);
     }
 
 }

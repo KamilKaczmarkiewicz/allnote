@@ -11,7 +11,7 @@ import java.util.List;
 public interface NoteController {
 
     @GetMapping("/api/notes/{id}")
-    NoteModel getNote(@PathVariable("id") long id);
+    NoteModel getNote(@PathVariable("id") long noteId);
 
     @GetMapping("/api/notes")
     PagedModel getNotes
@@ -32,10 +32,10 @@ public interface NoteController {
 
     @PutMapping("/api/notes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void putNote(@PathVariable("id") long id, @RequestBody PutNoteRequest request);
+    void putNote(@PathVariable("id") long noteId, @RequestBody PutNoteRequest request);
 
     @DeleteMapping("/api/notes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteNote(@PathVariable("id") long id);
+    void deleteNote(@PathVariable("id") long noteId);
 
 }
