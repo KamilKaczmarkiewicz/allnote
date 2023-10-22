@@ -1,5 +1,6 @@
 package com.allnote.user;
 
+import com.allnote.user.dto.ChangeUserPasswordRequest;
 import com.allnote.user.dto.PostUserRequest;
 import com.allnote.user.dto.PutUserRequest;
 import com.allnote.user.exception.ForbiddenException;
@@ -50,6 +51,14 @@ public class UserControllerDefault implements UserController {
         }
         User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userService.update(request.putUserRequestToUser(user));
+    }
+
+    @Override
+    public void changeUserPassword(long userId, ChangeUserPasswordRequest request) {
+        if (!UserUtils.isUserAdminOrUserCaller(userId)) {
+            throw new ForbiddenException();
+        }
+        userService.changeUserPassword(userId, request);
     }
 
     @Override

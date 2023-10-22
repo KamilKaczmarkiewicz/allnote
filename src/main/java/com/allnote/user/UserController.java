@@ -1,5 +1,6 @@
 package com.allnote.user;
 
+import com.allnote.user.dto.ChangeUserPasswordRequest;
 import com.allnote.user.dto.PostUserRequest;
 import com.allnote.user.dto.PutUserRequest;
 import org.springframework.hateoas.PagedModel;
@@ -27,6 +28,10 @@ public interface UserController {
     @PutMapping("/api/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void putUser(@PathVariable("id") long userId, @RequestBody PutUserRequest request);
+
+    @PutMapping("/api/users/{id}/change-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void changeUserPassword(@PathVariable("id") long userId, @RequestBody ChangeUserPasswordRequest request);
 
     @DeleteMapping("/api/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

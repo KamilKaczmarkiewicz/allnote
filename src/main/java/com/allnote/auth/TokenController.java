@@ -5,6 +5,7 @@ import com.allnote.auth.dto.LoginRequest;
 import com.allnote.user.dto.PostUserRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,5 +23,9 @@ public interface TokenController {
     @PostMapping("/api/auth/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     AuthenticationResponse refreshToken(HttpServletRequest request);
+
+    @PostMapping("/api/auth/users/{username}/forgot-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void forgotUserPassword(@PathVariable("username") String username);
 
 }

@@ -2,6 +2,7 @@ package com.allnote.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,6 +39,10 @@ public class UserUtils {
                 .stream()
                 .map(authority -> authority.getAuthority())
                 .anyMatch(authority -> permission.getPermission().equals(authority));
+    }
+
+    public static String generateRandomPassword() {
+        return RandomStringUtils.random(12, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789!@#$|");
     }
 
 }

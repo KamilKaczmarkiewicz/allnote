@@ -1,6 +1,11 @@
 package com.allnote.user;
 
+import com.allnote.mail.MailConstants;
+import com.allnote.mail.MailService;
+import com.allnote.user.dto.ChangeUserPasswordRequest;
+import com.allnote.user.exception.IncorrectPasswordException;
 import com.allnote.user.exception.InvalidFileExtensionException;
+import com.allnote.user.exception.PasswordsMustBeTheSameException;
 import com.allnote.user.exception.UserNotFoundException;
 import com.allnote.utils.Constants;
 import com.allnote.utils.Utils;
@@ -20,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +34,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    private final MailService mailService;
 
     public Optional<User> find(long userId) {
         return userRepository.findById(userId);
@@ -112,5 +120,31 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException());
+    }
+
+    public void forgotUserPassword(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException());
+        //todo encrypt password
+        String randomPassword = UserUtils.generateRandomPassword();
+        user.setPassword(randomPassword);
+        userRepository.save(user);
+        HashMap<String, Object> templateMap = new HashMap<>();
+        templateMap.put("name", user.getFirstName() + " " + user.getLastName());
+        templateMap.put("new_password", randomPassword);
+        mailService.sendMail(MailConstants.FORGOT_MY_PASSWORD_MAIL_TITLE, user.getEmail(),
+                templateMap, MailConstants.FORGOT_MY_PASSWORD_TEMPLATE);
+    }
+
+    public void changeUserPassword(long userId, ChangeUserPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        //todo change it after adding password encryption
+        if (!request.oldPassword().equals(user.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        if (!request.newPassword().equals(request.newPasswordRepeated())) {
+            throw new PasswordsMustBeTheSameException();
+        }
+        user.setPassword(request.newPassword());
+        userRepository.save(user);
     }
 }

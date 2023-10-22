@@ -29,7 +29,6 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //todo 4. sending mails and reset/forget password
         //todo 5. add tags to notes
         //todo 6. add rabbitmq and make send mailing with using it (in the same application)
         //todo . tests (unit i integration)
