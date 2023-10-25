@@ -1,9 +1,11 @@
 package com.allnote.note;
 
 import com.allnote.note.exception.NoteNotFoundException;
+import com.allnote.openAi.OpenAiService;
 import com.allnote.tag.Tag;
 import com.allnote.tag.TagService;
 import com.allnote.user.User;
+import com.allnote.utils.Constants;
 import com.allnote.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,8 @@ public class NoteService {
     private final NoteRepository noteRepository;
 
     private final TagService tagService;
+
+    private final OpenAiService openAiService;
 
     Optional<Note> find(long noteId) {
         return noteRepository.findById(noteId);
@@ -82,4 +86,22 @@ public class NoteService {
             noteRepository.save(note);
         }
     }
+
+    public void create(Note note, boolean generateSummaryWithAI) {
+        create(note);
+        if (generateSummaryWithAI && (note.getSummary() == null || note.getSummary() == "")) {
+            new Thread(() -> {
+                generateSummaryByChatGpt(note.getId());
+            }).start();
+        }
+    }
+
+    private void generateSummaryByChatGpt(long noteId) {
+        Note note = find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        String summaryByChatGpt = openAiService.generateSummaryByChatGpt(
+                Constants.GENERATE_SUMMARY_BASED_ON_CONTENT_PREFIX + note.getContent());
+        note.setSummary(summaryByChatGpt);
+        noteRepository.save(note);
+    }
+
 }

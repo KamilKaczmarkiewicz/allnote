@@ -29,7 +29,6 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         //todo 6. add kafka and make send mailing with using it (in the same application)
-        //todo 7. add option to generate note summary by using chatGPT
         //todo . tests (unit i integration)
         return http
                 .csrf(csrf -> {

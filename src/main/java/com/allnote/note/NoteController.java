@@ -31,7 +31,8 @@ public interface NoteController {
 
     @PostMapping("/api/users/{id}/notes")
     @ResponseStatus(HttpStatus.CREATED)
-    void postNote(@PathVariable("id") long userId, @RequestBody PostNoteRequest request);
+    void postNote(@PathVariable("id") long userId, @RequestBody PostNoteRequest request,
+    @RequestParam(defaultValue = "false") boolean generateSummaryWithAI);
 
     @PutMapping("/api/notes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -48,12 +48,12 @@ public class NoteControllerDefault implements NoteController {
     }
 
     @Override
-    public void postNote(long userId, PostNoteRequest request) {
+    public void postNote(long userId, PostNoteRequest request, boolean generateSummaryWithAI) {
         if (!UserUtils.isUserAdminOrUserCaller(userId)) {
             throw new ForbiddenException();
         }
         User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        noteService.create(request.postNoteRequestToNote(user));
+        noteService.create(request.postNoteRequestToNote(user), generateSummaryWithAI);
     }
 
     @Override
