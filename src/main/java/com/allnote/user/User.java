@@ -49,7 +49,7 @@ public class User implements UserDetails {
     @Column(name = "profile_picture_path")
     private String profilePicturePath;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)//todo check deleting
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Note> notes;

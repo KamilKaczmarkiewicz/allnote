@@ -1,6 +1,8 @@
 package com.allnote.note;
 
 import com.allnote.note.exception.NoteNotFoundException;
+import com.allnote.tag.Tag;
+import com.allnote.tag.TagService;
 import com.allnote.user.User;
 import com.allnote.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ import java.util.Optional;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+
+    private final TagService tagService;
 
     Optional<Note> find(long noteId) {
         return noteRepository.findById(noteId);
@@ -50,4 +54,32 @@ public class NoteService {
         noteRepository.delete(note);
     }
 
+    public Page<Note> findAllWithTags(List<String> tags, int page, int size, List<String> sort) {
+        Pageable pr = PageRequest.of(page, size, Sort.by(Utils.createSortOrder(sort)));
+        return noteRepository.findAllWithTags(tags, pr);
+    }
+
+    public Page<Note> findAllByUserWithTags(User user, List<String> tags, int page, int size, List<String> sort) {
+        Pageable pr = PageRequest.of(page, size, Sort.by(Utils.createSortOrder(sort)));
+        return noteRepository.findAllByUserWithTags(user, tags, pr);
+
+    }
+
+    public void addTagToNote(Note note, String tagId) {
+        Optional<Tag> tag = tagService.find(tagId);
+        if (tag.isEmpty()) {
+            tagService.create(Tag.builder().name(tagId).build());
+            tag = tagService.find(tagId);
+        }
+        note.getTags().add(tag.get());
+        noteRepository.save(note);
+    }
+
+    public void deleteTagFromNote(Note note, String tagId) {
+        Optional<Tag> tag = tagService.find(tagId);
+        if (tag.isPresent()) {
+            note.getTags().remove(tag.get());
+            noteRepository.save(note);
+        }
+    }
 }

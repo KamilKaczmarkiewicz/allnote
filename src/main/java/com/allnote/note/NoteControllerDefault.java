@@ -15,7 +15,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -73,6 +72,37 @@ public class NoteControllerDefault implements NoteController {
             throw new ForbiddenException();
         }
         noteService.delete(note);
+    }
+
+    @Override
+    public PagedModel getNotesWithTags(List<String> tags, int page, int size, List<String> sort) {
+        Page<Note> notes = noteService.findAllWithTags(tags, page, size, sort);
+        return pagedResourcesAssembler.toModel(notes, noteModelAssembler);
+    }
+
+    @Override
+    public PagedModel getUserNotesWithTags(long userId, List<String> tags, int page, int size, List<String> sort) {
+        User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        Page<Note> notes = noteService.findAllByUserWithTags(user, tags, page, size, sort);
+        return pagedResourcesAssembler.toModel(notes, noteModelAssembler);
+    }
+
+    @Override
+    public void addTagToNote(long noteId, String tagId) {
+        Note note = noteService.find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        if (!UserUtils.isUserAdminOrUserCaller(note.getUser().getId())) {
+            throw new ForbiddenException();
+        }
+        noteService.addTagToNote(note, tagId);
+    }
+
+    @Override
+    public void deleteTagFromNote(long noteId, String tagId) {
+        Note note = noteService.find(noteId).orElseThrow(() -> new NoteNotFoundException(noteId));
+        if (!UserUtils.isUserAdminOrUserCaller(note.getUser().getId())) {
+            throw new ForbiddenException();
+        }
+        noteService.deleteTagFromNote(note, tagId);
     }
 
 }

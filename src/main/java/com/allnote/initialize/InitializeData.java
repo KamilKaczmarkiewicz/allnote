@@ -2,6 +2,8 @@ package com.allnote.initialize;
 
 import com.allnote.note.Note;
 import com.allnote.note.NoteService;
+import com.allnote.tag.Tag;
+import com.allnote.tag.TagService;
 import com.allnote.user.Role;
 import com.allnote.user.User;
 import com.allnote.user.UserService;
@@ -20,8 +22,24 @@ public class InitializeData implements InitializingBean {
 
     private final UserService userService;
 
+    private final TagService tagService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
+        Tag t1 = Tag.builder()
+                .name("food")
+                .build();
+        Tag t2 = Tag.builder()
+                .name("chicken")
+                .build();
+        Tag t3 = Tag.builder()
+                .name("restaurant")
+                .build();
+
+        tagService.create(t1);
+        tagService.create(t2);
+        tagService.create(t3);
+
         LinkedList<String> orderUsers = new LinkedList<>();
         orderUsers.add("username");
         orderUsers.add("asc");
@@ -109,6 +127,19 @@ public class InitializeData implements InitializingBean {
                     .content("I am so I eat")
                     .user(a3)
                     .build();
+
+            note1.getTags().add(t1);
+            note1.getTags().add(t2);
+            note1.getTags().add(t3);
+            note2.getTags().add(t1);
+            note2.getTags().add(t2);
+            note3.getTags().add(t3);
+            note3.getTags().add(t1);
+            note4.getTags().add(t2);
+            note4.getTags().add(t3);
+            note5.getTags().add(t1);
+            note5.getTags().add(t2);
+            note6.getTags().add(t3);
 
             noteService.create(note1);
             noteService.create(note2);

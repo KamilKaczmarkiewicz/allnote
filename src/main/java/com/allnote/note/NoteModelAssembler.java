@@ -25,6 +25,7 @@ public class NoteModelAssembler implements RepresentationModelAssembler<Note, No
                 .createdTime(entity.getCreatedTime())
                 .lastModifiedDate(entity.getLastModifiedDate())
                 .user(userModelAssembler.toModel(entity.getUser()))
+                .tags(entity.getTags())
                 .build();
         Link link = linkTo(methodOn(NoteControllerDefault.class).getNote(entity.getId())).withSelfRel();
         noteModel.add(link);

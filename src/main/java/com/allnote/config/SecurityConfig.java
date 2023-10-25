@@ -19,7 +19,6 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final String[] WHITE_LIST_URL = {
-            "/api/notes/**",
             "/api/auth/**",
             "/h2-console/**"
     };
@@ -29,8 +28,8 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //todo 5. add tags to notes
-        //todo 6. add rabbitmq and make send mailing with using it (in the same application)
+        //todo 6. add kafka and make send mailing with using it (in the same application)
+        //todo 7. add option to generate note summary by using chatGPT
         //todo . tests (unit i integration)
         return http
                 .csrf(csrf -> {
