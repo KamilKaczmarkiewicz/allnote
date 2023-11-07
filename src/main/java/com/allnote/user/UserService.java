@@ -1,6 +1,7 @@
 package com.allnote.user;
 
 import com.allnote.mail.MailConstants;
+import com.allnote.mail.MailInfoByKafka;
 import com.allnote.mail.MailService;
 import com.allnote.user.dto.ChangeUserPasswordRequest;
 import com.allnote.user.exception.IncorrectPasswordException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +37,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    private final MailService mailService;
+    private final KafkaTemplate kafkaTemplate;
 
     public Optional<User> find(long userId) {
         return userRepository.findById(userId);
@@ -131,8 +133,8 @@ public class UserService implements UserDetailsService {
         HashMap<String, Object> templateMap = new HashMap<>();
         templateMap.put("name", user.getFirstName() + " " + user.getLastName());
         templateMap.put("new_password", randomPassword);
-        mailService.sendMail(MailConstants.FORGOT_MY_PASSWORD_MAIL_TITLE, user.getEmail(),
-                templateMap, MailConstants.FORGOT_MY_PASSWORD_TEMPLATE);
+        kafkaTemplate.send(Constants.KAFKA_MAIL_TOPIC, new MailInfoByKafka(MailConstants.FORGOT_MY_PASSWORD_MAIL_TITLE,
+                user.getEmail(), templateMap, MailConstants.FORGOT_MY_PASSWORD_TEMPLATE));
     }
 
     public void changeUserPassword(long userId, ChangeUserPasswordRequest request) {

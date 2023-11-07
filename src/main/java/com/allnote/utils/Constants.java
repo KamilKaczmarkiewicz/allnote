@@ -11,4 +11,7 @@ public class Constants {
     //    OPEN_AI
     public static final String GENERATE_SUMMARY_BASED_ON_CONTENT_PREFIX = "Generate summary and nothing more for the given text. Summary has to be in the same language as the text and can not be longer than 200 characters. Text: ";
 
+
+    // KAFKA
+    public static final String KAFKA_MAIL_TOPIC = "kafka-mail-topic";
 }

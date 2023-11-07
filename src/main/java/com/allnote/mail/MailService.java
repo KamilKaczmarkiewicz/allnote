@@ -1,9 +1,11 @@
 package com.allnote.mail;
 
+import com.allnote.utils.Constants;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -47,5 +49,13 @@ public class MailService {
     public void sendMail(MimeMessage message) {
         javaMailSender.send(message);
         log.info("Mail send successfully.");
+    }
+
+    @KafkaListener(
+            topics = Constants.KAFKA_MAIL_TOPIC,
+            groupId = "groupIds"
+    )
+    void kafkaListenerForSendMail(MailInfoByKafka data) {
+        sendMail(data.getSubject(), data.getRecipient(), data.getContextMap(), data.getTemplateName());
     }
 }
