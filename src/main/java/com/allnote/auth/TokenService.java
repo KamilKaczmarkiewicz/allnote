@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -64,7 +65,7 @@ public class TokenService {
         try {
             userService.loadUserByUsername(request.username());
             throw new UserWithUsernameAlreadyExistsException(request.username());
-        } catch (Exception e) {
+        } catch (UsernameNotFoundException e) {
             log.info("Register new user: " + request.username());
         }
         User user = request.postUserRequestToUser();
