@@ -91,63 +91,63 @@ public class InitializeData implements InitializingBean {
         orderNotes.add("title");
         orderNotes.add("asc");
 //        todo change how we init data
-        if (false && noteService.findAll(0, 3, orderNotes).isEmpty()) {
-            Note note1 = Note.builder()
-                    .title("title one")
-                    .summary("sum one")
-                    .content("Some random content I would say hehe")
-                    .user(a1)
-                    .build();
-            Note note2 = Note.builder()
-                    .title("title two")
-                    .summary("sum two")
-                    .content("I don't like walks")
-                    .user(a1)
-                    .build();
-            Note note3 = Note.builder()
-                    .title("title three")
-                    .summary("sum three")
-                    .content("I prefer to drink water")
-                    .user(a2)
-                    .build();
-            Note note4 = Note.builder()
-                    .title("title 4")
-                    .summary("sum 4")
-                    .content("training is fun thing to do")
-                    .user(a2)
-                    .build();
-            Note note5 = Note.builder()
-                    .title("title 5")
-                    .summary("sum 5")
-                    .content("today is nice day")
-                    .user(a4)
-                    .build();
-            Note note6 = Note.builder()
-                    .title("title 6")
-                    .summary("sum 6")
-                    .content("I am so I eat")
-                    .user(a3)
-                    .build();
-
-            note1.getTags().add(t1);
-            note1.getTags().add(t2);
-            note1.getTags().add(t3);
-            note2.getTags().add(t1);
-            note2.getTags().add(t2);
-            note3.getTags().add(t3);
-            note3.getTags().add(t1);
-            note4.getTags().add(t2);
-            note4.getTags().add(t3);
-            note5.getTags().add(t1);
-            note5.getTags().add(t2);
-            note6.getTags().add(t3);
-
-            noteService.create(note1);
-            noteService.create(note2);
-            noteService.create(note3);
-            noteService.create(note4);
-            noteService.create(note5);
-            noteService.create(note6);
-        }
+//        if (false && noteService.findAll(0, 3, orderNotes).isEmpty()) {
+//            Note note1 = Note.builder()
+//                    .title("title one")
+//                    .summary("sum one")
+//                    .content("Some random content I would say hehe")
+//                    .user(a1)
+//                    .build();
+//            Note note2 = Note.builder()
+//                    .title("title two")
+//                    .summary("sum two")
+//                    .content("I don't like walks")
+//                    .user(a1)
+//                    .build();
+//            Note note3 = Note.builder()
+//                    .title("title three")
+//                    .summary("sum three")
+//                    .content("I prefer to drink water")
+//                    .user(a2)
+//                    .build();
+//            Note note4 = Note.builder()
+//                    .title("title 4")
+//                    .summary("sum 4")
+//                    .content("training is fun thing to do")
+//                    .user(a2)
+//                    .build();
+//            Note note5 = Note.builder()
+//                    .title("title 5")
+//                    .summary("sum 5")
+//                    .content("today is nice day")
+//                    .user(a4)
+//                    .build();
+//            Note note6 = Note.builder()
+//                    .title("title 6")
+//                    .summary("sum 6")
+//                    .content("I am so I eat")
+//                    .user(a3)
+//                    .build();
+//
+//            note1.getTags().add(t1);
+//            note1.getTags().add(t2);
+//            note1.getTags().add(t3);
+//            note2.getTags().add(t1);
+//            note2.getTags().add(t2);
+//            note3.getTags().add(t3);
+//            note3.getTags().add(t1);
+//            note4.getTags().add(t2);
+//            note4.getTags().add(t3);
+//            note5.getTags().add(t1);
+//            note5.getTags().add(t2);
+//            note6.getTags().add(t3);
+//
+//            noteService.create(note1);
+//            noteService.create(note2);
+//            noteService.create(note3);
+//            noteService.create(note4);
+//            noteService.create(note5);
+//            noteService.create(note6);
+//        }
     }
 }

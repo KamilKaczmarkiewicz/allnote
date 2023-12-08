@@ -41,8 +41,8 @@ public class NoteService {
         return noteRepository.findAllByUser(user, pr);
     }
 
-    public void create(Note note) {
-        noteRepository.save(note);
+    public Note create(Note note) {
+        return noteRepository.save(note);
     }
 
     void update(Note note) {
@@ -87,13 +87,10 @@ public class NoteService {
         }
     }
 
-    public void create(Note note, boolean generateSummaryWithAI) {
-        create(note);
-        if (generateSummaryWithAI && (note.getSummary() == null || note.getSummary() == "")) {
-            new Thread(() -> {
-                generateSummaryByChatGpt(note.getId());
-            }).start();
-        }
+    public void generateNoteSummary(Note note) {
+        new Thread(() -> {
+            generateSummaryByChatGpt(note.getId());
+        }).start();
     }
 
     private void generateSummaryByChatGpt(long noteId) {
