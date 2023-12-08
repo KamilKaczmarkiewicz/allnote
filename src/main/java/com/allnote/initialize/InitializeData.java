@@ -90,7 +90,8 @@ public class InitializeData implements InitializingBean {
         LinkedList<String> orderNotes = new LinkedList<>();
         orderNotes.add("title");
         orderNotes.add("asc");
-        if (noteService.findAll(0, 3, orderNotes).isEmpty()) {
+//        todo change how we init data
+        if (false && noteService.findAll(0, 3, orderNotes).isEmpty()) {
             Note note1 = Note.builder()
                     .title("title one")
                     .summary("sum one")

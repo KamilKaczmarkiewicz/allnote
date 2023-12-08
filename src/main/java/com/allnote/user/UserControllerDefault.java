@@ -31,6 +31,12 @@ public class UserControllerDefault implements UserController {
     }
 
     @Override
+    public UserModel getUser() {
+        User user = UserUtils.getUserFromPrincipal();
+        return userModelAssembler.toModel(user);
+    }
+
+    @Override
     public PagedModel getUsers(int page, int size, List<String> sort) {
         Page<User> users = userService.findAll(page, size, sort);
         return pagedResourcesAssembler.toModel(users, userModelAssembler);

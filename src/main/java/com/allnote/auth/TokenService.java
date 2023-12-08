@@ -100,6 +100,10 @@ public class TokenService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        if (userDetails instanceof User){
+            User user = (User) userDetails;
+            extraClaims.put("userId", user.getId());
+        }
         return buildToken(extraClaims, userDetails, jwtExpirationToken);
     }
 

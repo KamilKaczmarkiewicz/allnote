@@ -24,8 +24,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final String[] WHITE_LIST_URL = {
-            "/api/auth/**",
-            "/h2-console/**"
+            "/api/auth/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -33,8 +32,6 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //todo 6. add kafka and make send mailing with using it (in the same application)
-        //todo 7. add new db in docker
         //todo . tests (unit i integration)
         return http
                 .csrf(csrf -> {
@@ -49,9 +46,6 @@ public class SecurityConfig {
 //                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/users/**")).hasAnyRole(Role.ADMIN.name())
 //                    auth.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET,"/api/users/**")).hasAnyAuthority(Permission.ADMIN_READ.getPermission())
                     auth.anyRequest().authenticated();
-                })
-                .headers(headers -> {//todo delete after changing db for another than h2
-                    headers.frameOptions().disable();
                 })
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

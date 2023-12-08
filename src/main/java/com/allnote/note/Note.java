@@ -38,8 +38,7 @@ public class Note {
     private long id;
     private String title;
     private String summary;
-    @Column(name = "content", columnDefinition = "CLOB")
-    @Lob
+    @Column(name = "content", columnDefinition = "text")
     private String content;
     @CreatedDate
     @Column(name = "created_date")

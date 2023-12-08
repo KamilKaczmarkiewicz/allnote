@@ -15,6 +15,9 @@ public interface UserController {
     @GetMapping("/api/users/{id}")
     UserModel getUser(@PathVariable("id") long userId);
 
+    @GetMapping("/api/user")
+    UserModel getUser();
+
     @GetMapping("/api/users")
     PagedModel getUsers
             (@RequestParam(defaultValue = "0") int page,

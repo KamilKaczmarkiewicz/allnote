@@ -23,7 +23,7 @@ public class UserUtils {
         return user.getId() == userId;
     }
 
-    private static User getUserFromPrincipal() {
+    public static User getUserFromPrincipal() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
