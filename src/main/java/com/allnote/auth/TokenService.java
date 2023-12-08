@@ -6,6 +6,7 @@ import com.allnote.auth.exception.InvalidRefreshTokenException;
 import com.allnote.user.User;
 import com.allnote.user.UserService;
 import com.allnote.user.dto.PostUserRequest;
+import com.allnote.user.exception.UserNotFoundException;
 import com.allnote.user.exception.UserWithUsernameAlreadyExistsException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -65,7 +66,7 @@ public class TokenService {
         try {
             userService.loadUserByUsername(request.username());
             throw new UserWithUsernameAlreadyExistsException(request.username());
-        } catch (UsernameNotFoundException e) {
+        } catch (UserNotFoundException e) {
             log.info("Register new user: " + request.username());
         }
         User user = request.postUserRequestToUser();
