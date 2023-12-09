@@ -25,8 +25,14 @@ public class UserControllerDefault implements UserController {
     private PagedResourcesAssembler pagedResourcesAssembler;
 
     @Override
-    public UserModel getUser(long userId) {
+    public UserModel getUserById(long userId) {
         User user = userService.find(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return userModelAssembler.toModel(user);
+    }
+
+    @Override
+    public UserModel getUserByUsername(String username) {
+        User user = (User) userService.loadUserByUsername(username);
         return userModelAssembler.toModel(user);
     }
 

@@ -12,8 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface UserController {
-    @GetMapping("/api/users/{id}")
-    UserModel getUser(@PathVariable("id") long userId);
+    @GetMapping("/api/users/id/{id}")
+    UserModel getUserById(@PathVariable("id") long userId);
+
+    @GetMapping("/api/users/username/{username}")
+    UserModel getUserByUsername(@PathVariable("username") String username);
 
     @GetMapping("/api/user")
     UserModel getUser();

@@ -24,7 +24,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
                 .createdTime(entity.getCreatedTime())
                 .lastModifiedDate(entity.getLastModifiedDate())
                 .build();
-        Link link = linkTo(methodOn(UserControllerDefault.class).getUser(entity.getId())).withSelfRel();
+        Link link = linkTo(methodOn(UserControllerDefault.class).getUserById(entity.getId())).withSelfRel();
         userModel.add(link);
         return userModel;
     }
