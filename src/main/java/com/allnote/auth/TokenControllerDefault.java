@@ -4,11 +4,13 @@ import com.allnote.auth.dto.AuthenticationResponse;
 import com.allnote.auth.dto.LoginRequest;
 import com.allnote.user.UserService;
 import com.allnote.user.dto.PostUserRequest;
+import com.allnote.user.exception.IncorrectCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,8 +24,12 @@ public class TokenControllerDefault implements TokenController {
 
     @Override
     public AuthenticationResponse token(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.username(), request.password()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.username(), request.password()));
+        } catch (AuthenticationException e) {
+            throw new IncorrectCredentialsException();
+        }
         return tokenService.authenticate(request);
     }
 

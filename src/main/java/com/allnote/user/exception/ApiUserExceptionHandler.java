@@ -28,6 +28,11 @@ public class ApiUserExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
     }
 
+    @ExceptionHandler(value = {IncorrectCredentialsException.class})
+    public ResponseEntity<Object> handleIncorrectCredentialsException(RuntimeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(401));
+    }
+
     @ExceptionHandler(value = {PasswordsMustBeTheSameException.class})
     public ResponseEntity<Object> handlePasswordsMustBeTheSameException(RuntimeException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(400));
